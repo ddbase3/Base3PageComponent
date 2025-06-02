@@ -17,7 +17,7 @@ class ilBase3PageComponentPlugin extends ilPageComponentPlugin {
 		 */
 	}
 
-	function getJavascriptFiles($a_mode) {
+	function getJavascriptFiles(string $a_mode): array {
 		return ['Customizing/global/plugins/Services/COPage/PageComponent/Base3PageComponent/assets/scriptloader.js'];
 	}
 }
