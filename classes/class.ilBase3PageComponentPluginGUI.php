@@ -86,7 +86,7 @@ class ilBase3PageComponentPluginGUI extends ilPageComponentPluginGUI {
 	private function initForm($a_create = false): \ilPropertyFormGUI {
 
 		$mainTemplate = $this->ui->mainTemplate();
-		$mainTemplate->addJavaScript('Customizing/global/plugins/Services/COPage/PageComponent/Base3PageComponent/assets/script.js');
+		$mainTemplate->addJavaScript('Customizing/global/plugins/Services/COPage/PageComponent/Base3PageComponent/assets/dynamicform.js');
 
 		$defaultProps = [
 			'pagemodule' => '',
@@ -126,7 +126,11 @@ class ilBase3PageComponentPluginGUI extends ilPageComponentPluginGUI {
 		switch ($a_mode) {
 			case 'edit':
 
-				$html = '<div><b>' . $a_properties['pagemodule'] . '</b><br /><i>BASE3 Page Component</i></div>';
+				$html = '<div>';
+				$html .= '<img src="Customizing/global/plugins/Services/COPage/PageComponent/Base3PageComponent/assets/logo.svg" style="width:50px; float:right;" />';
+				$html .= '<div><strong>' . $a_properties['pagemodule'] . '</strong></div>';
+				$html .= '<div><i>BASE3 Page Component</i></div>';
+				$html .= '</div>';
 				return $html;
 
 			case 'presentation':
