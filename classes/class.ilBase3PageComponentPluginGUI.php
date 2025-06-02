@@ -137,6 +137,9 @@ class ilBase3PageComponentPluginGUI extends ilPageComponentPluginGUI {
 
 			case 'presentation':
 
+				$mainTemplate = $this->ui->mainTemplate();
+				$mainTemplate->addJavaScript('Customizing/global/plugins/Services/COPage/PageComponent/Base3PageComponent/assets/scriptloader.js');
+
 				$pageModule = $this->classmap->getInstanceByInterfaceName(IPageModuleContent::class, $a_properties['pagemodule']);
 
 				$dataRaw = trim($a_properties['data']);
