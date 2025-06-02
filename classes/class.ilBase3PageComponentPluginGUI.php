@@ -1,7 +1,11 @@
 <?php
 
+use Base3\Api\IClassMap;
+use Base3\Page\Api\IPageModuleContent;
+
 /**
- * GUI Igor2Example plugin
+ * GUI Base3 plugin
+ * docu: https://docu.ilias.de/ilias.php?baseClass=illmpresentationgui&cmd=layout&ref_id=42&obj_id=56942
  *
  * @author Daniel Dahme qualitus@qualitus.de
  * @version $Id$
@@ -10,95 +14,135 @@
  */
 class ilBase3PageComponentPluginGUI extends ilPageComponentPluginGUI {
 
+	protected ilCtrl $ilCtrl;
+	protected ilGlobalTemplateInterface $tpl;
+	protected ilLanguage $lng;
+	protected \ILIAS\DI\UIServices $ui;
+	protected IClassMap $classmap;
+
+	public function __construct() {
+
+		/** @var ILIAS\DI\Container $DIC */
+		$DIC = $GLOBALS['DIC'];
+
+		$this->ilCtrl = $DIC['ilCtrl'];
+		$this->tpl = $DIC['tpl'];
+		$this->lng = $DIC['lng'];
+		$this->ui = $DIC->ui();
+		$this->classmap = $DIC[IClassMap::class];
+	}
+
 	public function executeCommand(): void {
-		$cmd = $GLOBALS['DIC']['ilCtrl']->getCmd();
+		$cmd = $this->ilCtrl->getCmd();
 		if (method_exists($this, $cmd)) $this->$cmd();
 	}
 
 	public function insert(): void {
-		$tpl = $GLOBALS['DIC']['tpl'];
-
 		$form = $this->initForm(true);
-		$html = $form->getHTML();
-
-	        $tpl->setContent($html);
+		$this->tpl->setContent($form->getHTML());
 	}
 
 	public function edit(): void {
-		$tpl = $GLOBALS['DIC']['tpl'];
-
 		$form = $this->initForm(false);
-		$html = $form->getHTML();
-
-	        $tpl->setContent($html);
+		$this->tpl->setContent($form->getHTML());
 	}
 
 	public function create(): void {
-		$props = [];
-		$this->createElement($props);
-		$this->returnToParent();
+		$form = $this->initForm(true);
+		if ($form->checkInput()) {
+			$props = [
+				'pagemodule' => $form->getInput('pagemodule'),
+				'data' => trim($form->getInput('data')) . ' '  // ILIAS-Bug/sanitation: JSON needs a trailing space
+			];
+			if ($this->createElement($props)) {
+				$this->tpl->setOnScreenMessage('success', $this->lng->txt("msg_obj_modified"), true);
+				$this->returnToParent();
+			}
+		}
+		$form->setValuesByPost();
+		$this->tpl->setContent($form->getHtml());
 	}
 
 	public function update(): void {
-		$props = [];
-		$this->updateElement($props);
-		$this->returnToParent();
-	}
-
-	public function save(): void {
-		$tpl = $GLOBALS['DIC']['tpl'];
-	        $tpl->setContent('<b>save called</b>');
+		$form = $this->initForm(true);
+		if ($form->checkInput()) {
+			$props = [
+				'pagemodule' => $form->getInput('pagemodule'),
+				'data' => trim($form->getInput('data')) . ' '  // ILIAS-Bug/sanitation: JSON needs a trailing space
+			];
+			if ($this->updateElement($props)) {
+				$this->tpl->setOnScreenMessage('success', $this->lng->txt("msg_obj_modified"), true);
+				$this->returnToParent();
+			}
+		}
+		$form->setValuesByPost();
+		$this->tpl->setContent($form->getHtml());
 	}
 
 	public function cancel(): void {
 	        $this->returnToParent();
 	}
 
-	public function initForm($a_create = false): ilPropertyFormGUI {
-		$ilCtrl = $GLOBALS['DIC']['ilCtrl'];
+	private function initForm($a_create = false): \ilPropertyFormGUI {
+
+		$mainTemplate = $this->ui->mainTemplate();
+		$mainTemplate->addJavaScript('Customizing/global/plugins/Services/COPage/PageComponent/Base3PageComponent/assets/script.js');
+
+		$defaultProps = [
+			'pagemodule' => '',
+			'data' => ''
+		];
+		$props = array_merge($defaultProps, $this->getProperties());
 
 		$form = new \ilPropertyFormGUI();
 		$form->setTitle('BASE3 Page Component configuration');
 
+		$values = [];
+		$pageModules = $this->classmap->getInstancesByInterface(IPageModuleContent::class);
+		foreach ($pageModules as $pageModule) $values[$pageModule::getName()] = $pageModule::getName();
+		$selectPageModuleControl = new ilSelectInputGUI('Page Module', 'pagemodule');
+		$selectPageModuleControl->setOptions($values);
+		$selectPageModuleControl->setRequired(true);
+		$selectPageModuleControl->setValue($props['pagemodule']);
+		$form->addItem($selectPageModuleControl);
+
+		$pageModuleDataControl = new ilTextInputGUI('Data', 'data');
+		$pageModuleDataControl->setValue($props['data']);
+		$form->addItem($pageModuleDataControl);
+
 		if ($a_create) {
 			$this->addCreationButton($form);
-			$form->addCommandButton('cancel', 'cancel');
+			$form->addCommandButton('cancel', $this->lng->txt('cancel'));
 		} else {
-			$form->addCommandButton('update', 'save');
-			$form->addCommandButton('cancel', 'back');
+			$form->addCommandButton('update', $this->lng->txt('save'));
+			$form->addCommandButton('cancel', $this->lng->txt('cancel'));
 		}
 
-		$form->setFormAction($ilCtrl->getFormAction($this));
-
+		$form->setFormAction($this->ilCtrl->getFormAction($this));
 		return $form;
 	}
 
 	public function getElementHTML(string $a_mode, array $a_properties, string $plugin_version): string {
-		$html = 'unknown mode';
 		switch ($a_mode) {
 			case 'edit':
 
-				$html = 'BASE3 Page Component';
-				break;
+				$html = '<div><b>' . $a_properties['pagemodule'] . '</b><br /><i>BASE3 Page Component</i></div>';
+				return $html;
 
 			case 'presentation':
 
-				$content = '<h1>BASE3 Page Component</h1>';
-				$content .= '<h2>Plugin List</h2>';
+				$pageModule = $this->classmap->getInstanceByInterfaceName(IPageModuleContent::class, $a_properties['pagemodule']);
 
-				$classmap = $GLOBALS['DIC'][\Base3\Api\IClassMap::class];
-				$plugins = $classmap->getInstancesByInterface(\Base3\Api\IPlugin::class);
-				$pluginNames = [];
-				foreach ($plugins as $plugin) $pluginNames[] = '<li>' . $plugin::getName() . '</li>';
+				$dataRaw = trim($a_properties['data']);
+				if (strlen($dataRaw)) try {
+					$data = json_decode($a_properties['data'], true, 512, JSON_THROW_ON_ERROR);
+					$pageModule->setData($data);
+				} catch (JsonException $e) {
+					return 'Error decoding json: ' . $e->getMessage();
+				}
 
-				$content .= '<ul>' . implode('', $pluginNames) . '</ul>';
-
-				$pageModule = $classmap->getInstanceByInterfaceName(\Base3\Page\Api\IPageModule::class, 'pagecontent');
-				$pageModule->setData([ 'content' => $content ]);
-				$html = $pageModule->getHtml();
-
-				break;
+				return $pageModule->getHtml();
 		}
-		return $html;
+		return 'Unknown mode';
 	}
 }

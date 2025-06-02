@@ -7,10 +7,13 @@ class ilBase3PageComponentPlugin extends ilPageComponentPlugin {
 	}
 	
 	function isValidParentType(string $a_type): bool {
-		global $DIC;
+		return true;
 
+		/*
+		global $DIC;
 		$rbacreview = $DIC->rbac()->review();
 		$usr_roles = $rbacreview->assignedGlobalRoles($DIC->user()->getId());
 		return in_array(2, $usr_roles);
+		 */
 	}
 }
