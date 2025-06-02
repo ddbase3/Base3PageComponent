@@ -126,10 +126,12 @@ class ilBase3PageComponentPluginGUI extends ilPageComponentPluginGUI {
 		switch ($a_mode) {
 			case 'edit':
 
-				$html = '<div>';
-				$html .= '<img src="Customizing/global/plugins/Services/COPage/PageComponent/Base3PageComponent/assets/logo.svg" style="width:50px; float:right;" />';
-				$html .= '<div><strong>' . $a_properties['pagemodule'] . '</strong></div>';
-				$html .= '<div><i>BASE3 Page Component</i></div>';
+				$html = '<div style="display: flex; align-items: center; justify-content: space-between; background: #f9f9f9; border: 1px solid #ddd; padding: 12px 16px; border-radius: 8px; font-family: sans-serif;">';
+				$html .= '<div>';
+				$html .= '<div style="font-size: 1.1em; font-weight: bold; color: #333;">' . htmlspecialchars($a_properties['pagemodule']) . '</div>';
+				$html .= '<div style="font-size: 0.9em; color: #666;"><i>BASE3 Page Component</i></div>';
+				$html .= '</div>';
+				$html .= '<img src="Customizing/global/plugins/Services/COPage/PageComponent/Base3PageComponent/assets/logo.svg" style="width:48px; height:auto; margin-left: 16px;" />';
 				$html .= '</div>';
 				return $html;
 

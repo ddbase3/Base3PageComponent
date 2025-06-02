@@ -6,7 +6,7 @@ class ilBase3PageComponentPlugin extends ilPageComponentPlugin {
 		return 'Base3PageComponent';
 	}
 	
-	function isValidParentType(string $a_type): bool {
+	public function isValidParentType(string $a_type): bool {
 		return true;
 
 		/*
@@ -17,7 +17,7 @@ class ilBase3PageComponentPlugin extends ilPageComponentPlugin {
 		 */
 	}
 
-	function getJavascriptFiles(string $a_mode): array {
+	public function getJavascriptFiles(string $a_mode): array {
 		return ['Customizing/global/plugins/Services/COPage/PageComponent/Base3PageComponent/assets/scriptloader.js'];
 	}
 }
