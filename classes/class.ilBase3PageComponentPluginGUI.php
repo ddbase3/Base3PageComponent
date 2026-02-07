@@ -134,7 +134,7 @@ class ilBase3PageComponentPluginGUI extends ilPageComponentPluginGUI {
 				$html .= '<div style="font-size: 1.1em; font-weight: bold; color: #333;">' . htmlspecialchars($a_properties['pagemodule']) . '</div>';
 				$html .= '<div style="font-size: 0.9em; color: #666;"><i>BASE3 Page Component</i></div>';
 				$html .= '</div>';
-				$html .= '<img src="Customizing/global/plugins/Services/COPage/PageComponent/Base3PageComponent/assets/logo.svg" style="width:48px; height:auto; margin-left: 16px;" />';
+				$html .= '<img src="components/Base3/Base3Ilias/logo.svg" style="width:48px; height:auto; margin-left: 16px;" />';
 				$html .= '</div>';
 				return $html;
 
