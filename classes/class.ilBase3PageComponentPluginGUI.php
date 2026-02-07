@@ -1,6 +1,7 @@
 <?php
 
 use Base3\Api\IClassMap;
+use Base3\Api\IDisplay;
 use Base3\Page\Api\IPageModuleContent;
 
 /**
@@ -100,6 +101,8 @@ class ilBase3PageComponentPluginGUI extends ilPageComponentPluginGUI {
 		$values = [];
 		$pageModules = $this->classmap->getInstancesByInterface(IPageModuleContent::class);
 		foreach ($pageModules as $pageModule) $values[$pageModule::getName()] = $pageModule::getName();
+		$displays = $this->classmap->getInstancesByInterface(IDisplay::class);
+		foreach ($displays as $display) $values[$display::getName()] = $display::getName();
 		$selectPageModuleControl = new ilSelectInputGUI('Page Module', 'pagemodule');
 		$selectPageModuleControl->setOptions($values);
 		$selectPageModuleControl->setRequired(true);
@@ -140,17 +143,35 @@ class ilBase3PageComponentPluginGUI extends ilPageComponentPluginGUI {
 				$mainTemplate = $this->ui->mainTemplate();
 				$mainTemplate->addJavaScript('components/Base3/ClientStack/assetloader/assetloader.min.js');
 
+				// handle page module
 				$pageModule = $this->classmap->getInstanceByInterfaceName(IPageModuleContent::class, $a_properties['pagemodule']);
+				if ($pageModule != null) {
+					$dataRaw = trim($a_properties['data']);
+					if (strlen($dataRaw)) try {
+						$data = json_decode($a_properties['data'], true, 512, JSON_THROW_ON_ERROR);
+						$pageModule->setData($data);
+					} catch (JsonException $e) {
+						return 'Error decoding json: ' . $e->getMessage();
+					}
 
-				$dataRaw = trim($a_properties['data']);
-				if (strlen($dataRaw)) try {
-					$data = json_decode($a_properties['data'], true, 512, JSON_THROW_ON_ERROR);
-					$pageModule->setData($data);
-				} catch (JsonException $e) {
-					return 'Error decoding json: ' . $e->getMessage();
+					return $pageModule->getHtml();
 				}
 
-				return $pageModule->getHtml();
+				// handle display
+				$display = $this->classmap->getInstanceByInterfaceName(IDisplay::class, $a_properties['pagemodule']);
+				if ($display != null) {
+					$dataRaw = trim($a_properties['data']);
+					if (strlen($dataRaw)) try {
+						$data = json_decode($a_properties['data'], true, 512, JSON_THROW_ON_ERROR);
+						$display->setData($data);
+					} catch (JsonException $e) {
+						return 'Error decoding json: ' . $e->getMessage();
+					}
+
+					return $display->getOutput();
+				}
+
+				return 'UI element not found';
 		}
 		return 'Unknown mode';
 	}
