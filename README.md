@@ -1,6 +1,6 @@
 # Base3PageComponent
 
-BASE3 ILIAS Integration.
+Base3PageComponent provides a generic ILIAS Page Component for embedding arbitrary BASE3 displays into ILIAS content pages. BASE3 displays are UI elements provided by the BASE3 Framework and its plugins, ranging from reporting views, calendars, maps, and UI tools to many other interactive interface components.
 
 The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD",
 "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL"
@@ -11,39 +11,30 @@ in this document are to be interpreted as described in
 
 * [Requirements](#requirements)
 * [Installation](#installation)
-* [Configuration](#configuration)
-* [Specifications](#specifications)
-* [Other Information](#other-information)
-    * [Correlations](#correlations)
-    * [Bugs](#bugs)
-    * [License](#license)
+* [BASE3 Framework Dependency](#base3-framework-dependency)
 
 ## Requirements
 
-*  [![Minimum ILIAS Version](https://img.shields.io/badge/Minimum_ILIAS-10.0-orange.svg)](https://ilias.de/) [![Maximum ILIAS Version](https://img.shields.io/badge/Maximum_ILIAS-10.999-orange.svg)](https://ilias.de/)
-*  ![Plugin Slot](https://img.shields.io/badge/Slot-UIHook-blue)
-*  ![Plugin Version](https://img.shields.io/badge/plugin_version-1.0.0-yellow)
-*  [![Minimum PHP Version](https://img.shields.io/badge/Minimum_PHP-8.1-blue.svg)](https://php.net/) [![Maximum PHP Version](https://img.shields.io/badge/Maximum_PHP-8.3-blue.svg)](https://php.net/)
+* [![Minimum ILIAS Version](https://img.shields.io/badge/Minimum_ILIAS-10.0-orange.svg)](https://ilias.de/) [![Maximum ILIAS Version](https://img.shields.io/badge/Maximum_ILIAS-12.999-orange.svg)](https://ilias.de/)
+* ![Plugin Slot](https://img.shields.io/badge/Slot-PageComponent-blue)
+* [![Minimum PHP Version](https://img.shields.io/badge/Minimum_PHP-8.1-blue.svg)](https://php.net/) [![Maximum PHP Version](https://img.shields.io/badge/Maximum_PHP-8.4-blue.svg)](https://php.net/)
 
 ## Installation
 
 Before installing the plugin ensure all requirements are given.
-The files MUST be saved in the following directory:<ILIAS>/Customizing/global/plugins/Services/COPage/PageComponent/Base3PageComponent.
+The files MUST be saved in the following directory:
 
-Correct file and folder permissions MUST be
-ensured by the responsible system administrator.
-The plugin's files and folder SHOULD NOT be created as root.
+```
+<ILIAS>/public/Customizing/global/plugins/Services/COPage/PageComponent/Base3PageComponent
+```
 
-## Configuration
+Correct file and folder permissions MUST be ensured by the responsible system administrator.
+The plugin's files and folders SHOULD NOT be created as root.
 
-#### Templates
+After copying the plugin files, the plugin MUST be installed and activated in the ILIAS administration.
 
-#### ContentPage Elements
+## BASE3 Framework Dependency
 
-## Specifications
+This plugin is only runnable in connection with the BASE3 Framework, the BaseIlias integration, the corresponding dependent BASE3 components, and the Base3IliasAdapter UIHook plugin.
 
-## Other information
-
-#### Bugs
-
-#### License
+These dependencies MUST be installed, configured, and active before this plugin can be used productively.
