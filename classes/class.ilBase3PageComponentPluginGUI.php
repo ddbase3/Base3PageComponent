@@ -1,5 +1,6 @@
 <?php
 
+use Base3\Api\IAssetResolver;
 use Base3\Api\IClassMap;
 use Base3\Api\IDisplay;
 use Base3\Page\Api\IPageModuleContent;
@@ -20,6 +21,7 @@ class ilBase3PageComponentPluginGUI extends ilPageComponentPluginGUI {
 	protected ilLanguage $lng;
 	protected \ILIAS\DI\UIServices $ui;
 	protected IClassMap $classmap;
+	protected IAssetResolver $assetResolver;
 
 	public function __construct() {
 
@@ -31,6 +33,7 @@ class ilBase3PageComponentPluginGUI extends ilPageComponentPluginGUI {
 		$this->lng = $DIC['lng'];
 		$this->ui = $DIC->ui();
 		$this->classmap = $DIC[IClassMap::class];
+		$this->assetResolver = $DIC[IAssetResolver::class];
 	}
 
 	public function executeCommand(): void {
@@ -134,14 +137,16 @@ class ilBase3PageComponentPluginGUI extends ilPageComponentPluginGUI {
 				$html .= '<div style="font-size: 1.1em; font-weight: bold; color: #333;">' . htmlspecialchars($a_properties['pagemodule']) . '</div>';
 				$html .= '<div style="font-size: 0.9em; color: #666;"><i>BASE3 Page Component</i></div>';
 				$html .= '</div>';
-				$html .= '<img src="components/Base3/Base3Ilias/logo.svg" style="width:48px; height:auto; margin-left: 16px;" />';
+				$html .= '<img src="' . htmlspecialchars($this->assetResolver->resolve('plugin/Base3Ilias/assets/logo.svg'), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') . '" style="width:48px; height:auto; margin-left: 16px;" />';
 				$html .= '</div>';
 				return $html;
 
 			case 'presentation':
 
 				$mainTemplate = $this->ui->mainTemplate();
-				$mainTemplate->addJavaScript('components/Base3/ClientStack/assetloader/assetloader.min.js');
+				$mainTemplate->addJavaScript(
+					$this->assetResolver->resolve('plugin/ClientStack/assets/assetloader/assetloader.min.js')
+				);
 
 				// handle page module
 				$pageModule = $this->classmap->getInstanceByInterfaceName(IPageModuleContent::class, $a_properties['pagemodule']);
