@@ -1,5 +1,6 @@
 <?php
 
+use Base3\Accesscontrol\Api\IAccesscontrol;
 use Base3\Api\IAssetResolver;
 use Base3\Api\IClassMap;
 use Base3\Api\IDisplay;
@@ -22,6 +23,7 @@ class ilBase3PageComponentPluginGUI extends ilPageComponentPluginGUI {
 	protected \ILIAS\DI\UIServices $ui;
 	protected IClassMap $classmap;
 	protected IAssetResolver $assetResolver;
+	protected IAccesscontrol $accesscontrol;
 
 	public function __construct() {
 
@@ -34,6 +36,7 @@ class ilBase3PageComponentPluginGUI extends ilPageComponentPluginGUI {
 		$this->ui = $DIC->ui();
 		$this->classmap = $DIC[IClassMap::class];
 		$this->assetResolver = $DIC[IAssetResolver::class];
+		$this->accesscontrol = $DIC[IAccesscontrol::class];
 	}
 
 	public function executeCommand(): void {
@@ -142,6 +145,8 @@ class ilBase3PageComponentPluginGUI extends ilPageComponentPluginGUI {
 				return $html;
 
 			case 'presentation':
+
+				$this->accesscontrol->authenticate();
 
 				$mainTemplate = $this->ui->mainTemplate();
 				$mainTemplate->addJavaScript(
